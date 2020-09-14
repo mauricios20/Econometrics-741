@@ -73,11 +73,22 @@ for i in range(0, 10001):
 arr = np.asarray(xbars)
 
 # (i) Produce  a  graph  of  the  distribution  of  these  10,000  samplemeans
+
+# Create a figure with 1x2 subplot and make the left subplot active
+plt.subplot(1, 2, 1)
+
 plt.plot(arr)
 plt.title('Random Samples')
 plt.axhline(y=muinc, color='r', linestyle='-')  # 'population set mean'
 plt.ylabel('Sample Mean for each sample')
 plt.xlabel('Number of samples')
+
+# Make the right subplot active in the current 1x2 subplot grid
+plt.subplot(1, 2, 2)
+plt.hist(arr, bins=100)
+plt.title('Histogram')
+plt.axvline(x=muinc, color='r', linestyle='-')
+plt.tight_layout
 plt.show()
 
 # (ii) Report the average of these 10,000 sample means.
