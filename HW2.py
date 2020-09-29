@@ -16,7 +16,7 @@ df = df.astype({'age': 'int32'})
 print(df.dtypes)
 
 # Filter data to women who are employed and age between 30 to 39
-df2 = df.loc[(df.empstat == 'employed') & (df.age >= 35)]
+df2 = df.loc[(df.empstat == 'employed') & (df.age >= 35) & (df.sex == 'female')]
 
 print(df2.shape)  # '(4700, 8) Number of rows and columns'
 
@@ -31,7 +31,7 @@ model.fit(x, y)
 print(model.intercept_)
 print(model.coef_)
 
-# y_hat = 147907.4631265903 + 3046.39394215age
+# y_hat = 171886.32905437 + 1349.45725237age
 
 # Reproduce scikit-learn results with linear algebra
 N = len(x)
@@ -45,7 +45,7 @@ X_with_intercept[:, 1:p] = x.values
 beta_hat = np.linalg.inv(X_with_intercept.T @ X_with_intercept) @ X_with_intercept.T @ y.values
 print(beta_hat)
 
-# y_hat = 147907.4631265903 + 3046.39394215age
+# y_hat = 171886.32905437 + 1349.45725237age
 
 # Compute standard errors of the parameter estimates
 y_hat = model.predict(x)
@@ -57,10 +57,78 @@ for p_ in range(p):
     standard_error = var_beta_hat[p_, p_] ** 0.5
     print(f"SE(beta_hat[{p_}]): {standard_error}")
 
-# SE(beta_hat[0]): 18121.362859471137
-# SE(beta_hat[1]): 402.32230240720423
+# SE(beta_hat[0]): 25328.832831136446
+# SE(beta_hat[1]): 570.3044786642951
 
 # Confirm with statsmodels
 ols = sm.OLS(y.values, X_with_intercept)
 ols_result = ols.fit()
 print(ols_result.summary())
+
+# Chapter 6 Questions
+# 1. Continuing with the regressions from above, report results using White’s
+# Heteroskedasticity Robust Standard Errors.
+ols = sm.RLM(y.values, X_with_intercept)
+ols_robust = ols.fit()
+print(ols_robust.summary())
+
+# 2 Let’s see how earnings varies with age. Take the log of earnings before
+# running these regressions. Now please use both men and women
+# who are employed and 35 years older or more.
+
+df3 = df.loc[(df.empstat == 'employed') & (df.age >= 35)]
+df3['lnwage'] = np.log(df3.incwage)
+df3['age2'] = np.power((df3.age), 2)
+df3['age3'] = np.power((df3.age), 3)
+print(df3.head(3))
+
+# a) Run a linear regression of earnings on age.
+x = df3[['age']]
+y = df3[['lnwage']]
+
+# Reproduce scikit-learn results with linear algebra
+N = len(x)
+p = len(x.columns) + 1  # plus one because LinearRegression adds an intercept term
+
+
+X_with_intercept = np.empty(shape=(N, p), dtype=np.float)
+X_with_intercept[:, 0] = 1
+X_with_intercept[:, 1:p] = x.values
+
+ols = sm.OLS(y.values, X_with_intercept)
+ols_result_ln = ols.fit()
+print(ols_result_ln.summary())
+
+#  (b) Run a quadratic regression of earnings on age. (4 points)
+x = df3[['age', 'age2']]
+y = df3[['lnwage']]
+
+# Reproduce scikit-learn results with linear algebra
+N = len(x)
+p = len(x.columns) + 1  # plus one because LinearRegression adds an intercept term
+
+
+X_with_intercept = np.empty(shape=(N, p), dtype=np.float)
+X_with_intercept[:, 0] = 1
+X_with_intercept[:, 1:p] = x.values
+
+ols = sm.OLS(y.values, X_with_intercept)
+ols_result_ln = ols.fit()
+print(ols_result_ln.summary())
+
+#  (c) Run a cubic regression of earnings on age.
+x = df3[['age', 'age2', 'age3']]
+y = df3[['lnwage']]
+
+# Reproduce scikit-learn results with linear algebra
+N = len(x)
+p = len(x.columns) + 1  # plus one because LinearRegression adds an intercept term
+
+
+X_with_intercept = np.empty(shape=(N, p), dtype=np.float)
+X_with_intercept[:, 0] = 1
+X_with_intercept[:, 1:p] = x.values
+
+ols = sm.OLS(y.values, X_with_intercept)
+ols_result_ln = ols.fit()
+print(ols_result_ln.summary())
