@@ -81,7 +81,7 @@ df3 = df.loc[(df.empstat == 'employed') & (df.age >= 35)]
 df3['lnwage'] = np.log(df3.incwage)
 df3['age2'] = np.power((df3.age), 2)
 df3['age3'] = np.power((df3.age), 3)
-df3['MFX'] = np.array(df3['age']+2*df3['age2']*df3['age']+3*df3['age3']*df3['age2'])
+df3['MFX'] = np.array(0.7628+2*-0.0161*df3['age']+3 * 0.0001*df3['age2'])
 
 # a) Run a linear regression of earnings on age.
 x = df3[['age']]
@@ -162,6 +162,6 @@ plt.show()
 agebar = np.mean(df3['age'])
 age2bar = np.mean(df3['age2'])
 
-df3['MFX_bar'] = np.array(df3['age']+2*df3['age2']*agebar+3*df3['age3']*age2bar)
+MFX_bar = np.array(0.7628+2*-0.0161*agebar+3*0.0001*age2bar)
 print(df3['MFX'].describe())
-print(df3['MFX_bar'].describe())
+print(MFX_bar)
