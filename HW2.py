@@ -170,9 +170,9 @@ print(df3['MFX'].describe())
 # ii Also report the average of the marginal effects. Do not use
 # the MFX command! (3 points)
 
-MFX_bar = np.array(0.7628+2*-0.0161*agebar+3*0.0001*age2bar)
+MFX_bar = np.array(0.7627901+2*-0.0161201*agebar+3*0.0001142*age2bar)
 print(MFX_bar)
 
-# Part 3
+# Part 3B
 df6 = df.groupby(['race'])['incwage'].describe()
 print(df6)
